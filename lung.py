@@ -1,38 +1,61 @@
+#! /Users/michaelshih/anaconda3/bin/python
+
 #%%
 import numpy as np
 import pandas as pd
 import os
+from imp import reload 
+from my_package import data_processing as dp
+reload(dp)
 
-dir = '/Users/major_minor1982/Documents/code/lung'
+# create data list        
+dir = '/Users/michaelshih/Documents/code/wucci/woo_lung_analysis'
 os.chdir(dir)
 datafolder = 'raw_xlsx'
 datapath = os.path.join(dir, datafolder)
-filenames = os.listdir(datafolder)
+print(datapath)
+
+# load data by pandas
+filenames = dp.listdir_nohidden(datapath)
 print(filenames)
 
-#%%
-# load data by pandas
-combined_data = pd.DataFrame([])
+combined_data_point = pd.DataFrame([])
+combined_data_segment = pd.DataFrame([])
+
 for m in filenames:
     
+    # create file path
     filepath = os.path.join(dir, datafolder, m)
     data = pd.ExcelFile(filepath)
     
+    # input xlsx file
     sheetname = data.sheet_names
     data_point = data.parse(sheetname[1])
     data_point = pd.DataFrame(data_point)
-    
-    # objectname = pd.DataFrame(m)
+    data_segment = data.parse(sheetname[2])
+    data_segment = pd.DataFrame(data_segment)
+
+    # create column for each group
     filename = os.path.splitext(m)[0]
     data_point['objectID'] = filename
+    data_segment['objectID'] = filename
 
-    #data_merge = pd.concat([data_point, objectname], axis = 1) 
-    combined_data = combined_data.append(data_point, ignore_index = True)
-
+    combined_data_point = combined_data_point.append(data_point, ignore_index = True)
+    combined_data_segment = combined_data_segment.append(data_segment, ignore_index = True)
 
 # show data
-combined_data.head(5)
-print(combined_data.shape[0])
+combined_data_point.head(5)
+print(combined_data_point.shape[0])
+combined_data_segment.head(5)
+combined_data_segment.tail(5)
+#%%
+from imp import reload 
+from my_package import data_processing
+reload(data_processing)
+
+df = dp.combine_point_seg(combined_data_point, combined_data_segment)
+print(df)
+
 
 #%%
 import matplotlib.pyplot as plt
@@ -43,12 +66,12 @@ seaborn.set()
 # plt.ylabel('Probability')
 # plt.show()
 # plt.savefig('thickness_histogram.png')
-objectname = np.unique(combined_data['objectID'])
-x1 = combined_data.loc[combined_data['objectID'] == objectname[0], 'thickness']
-x2 = combined_data.loc[combined_data['objectID'] == objectname[1], 'thickness']
-n_bins=range(0, 200, 5)
+objectname = np.unique(combined_data_point['objectID'])
+x1 = combined_data_point.loc[combined_data_point['objectID'] == objectname[0], 'thickness']
+x2 = combined_data_point.loc[combined_data_point['objectID'] == objectname[1], 'thickness']
+n_bins=range(0, 200, 2)
 
-normed_par = 0
+normed_par = 1
 plt.hist(x1, n_bins, alpha=0.5, label = objectname[0], normed=normed_par)
 plt.hist(x2, n_bins, alpha=0.5, label = objectname[1], normed=normed_par)
 plt.xlim(left=0, right=200)
