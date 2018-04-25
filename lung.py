@@ -48,12 +48,20 @@ combined_data_point.head(5)
 print(combined_data_point.shape[0])
 combined_data_segment.head(5)
 combined_data_segment.tail(5)
+
 #%%
 from imp import reload 
-from my_package import data_processing
-reload(data_processing)
+from my_package import data_processing as dp
+reload(dp)
 
-df = dp.combine_point_seg(combined_data_point, combined_data_segment)
+Segment_ID, Node_ID_1, Node_ID_2, df = dp.combine_point_seg(combined_data_point, combined_data_segment)
+
+# display(combined_data_segment.head(5))
+'''
+print(Segment_ID)
+print(Node_ID_1)
+print(Node_ID_2)
+'''
 print(df)
 
 
