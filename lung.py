@@ -65,55 +65,86 @@ print(df)
 
 
 #%%
-df.to_csv("complited_data.csv", sep='\t')
+# save file
+df.to_csv('complited_data.csv', sep='\t')
 
-#%%
-df.to_pickle("complited_data.pkl")
+df.to_pickle('complited_data.pkl')
 
-#%%
 store = pd.HDFStore('complited_data.h5')
 store['df'] = df
 
-
+#%%
+del df
+store.close()
 
 #%%
-df = store['df']
+import numpy as np
+import pandas as pd
+import os
+from imp import reload 
+from my_package import data_processing as dp
+reload(dp)
+
+df = pd.read_csv('complited_data.csv', sep = '\t', index_col = 0)
 df
+
 #%%
+# calculate the average thickness fo each segment
 grouped_data = df.groupby([df['objectID'], df['Segment ID']])
 grouped_mean = grouped_data.mean()
+objectname = list(np.unique(grouped_mean.index.get_level_values(0)))
+objectname
+# grouped_mean.loc[objectname[0]]
 grouped_mean
-grouped_mean['objectID']
-grouped_data.groups.keys()
 
 #%%
-#df['thickness'].hist(by=df['objectID'], normed=1)
-grouped_mean['thickness'].hist()
+# plot the tickness of each segment
 
-#%%
 import matplotlib.pyplot as plt
 import seaborn as sns
+import bokeh.palettes
+import itertools
 sns.set()
 
-grouped_data.groups.keys()
-
-objectname = np.unique(grouped_mean['objectID'])
 print(objectname)
 normed_par = 1
 n_bins=range(0, 200, 2)
+'''
+color_palette = np.unique(bokeh.palettes.Paired[12])
+colors = itertools.cycle(color_palette)
+'''
+color = ['red', 'blue']
 
-for i in objectname:
-    plt.hist(i, n_bins, alpha=0.5, label = i, normed=normed_par)
-
+for i in range(len(objectname)):
+    print(objectname[i])
+    print(color[i])
+    
+    plt.hist(grouped_mean['thickness'].loc[objectname[i]], n_bins, alpha=0.5, label = objectname[i], \
+            normed=normed_par, color = color[i])
+    
 plt.xlim(left=0, right=200)
 plt.xlabel('thickness (µm)')
 plt.ylabel('Probability')
 plt.legend(loc='upper right')
 plt.show()
 
+#%%
+# calculate the length fo each segment
 
+temp = df.loc[df['objectID'] == objectname[1]].loc[df['Segment ID'] == 1]
+temp
+temp_1 = temp.iloc[0:len(temp)-1]
+temp_1
+temp_2 = temp.iloc[1:len(temp)]
+temp_2
 
+temp_2 = temp_2.set_index(temp_1.index.values)
+temp_2
 
+data = temp_2.loc[:, ('X Coord', 'Y Coord', 'Z Coord')] - temp_1.loc[:, ('X Coord', 'Y Coord', 'Z Coord')]
+data['length'] = np.sqrt(data['X Coord']**2 + data['Y Coord']**2 + data['Z Coord']**2)
+total_seg_length = sum(data['length'])
+total_seg_length
 
 
 #%%
