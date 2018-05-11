@@ -66,11 +66,11 @@ print(df)
 
 #%%
 # save file
-df.to_csv('complited_data.csv', sep='\t')
+df.to_csv('compiled_data.csv', sep='\t')
 
-df.to_pickle('complited_data.pkl')
+df.to_pickle('compiled_data.pkl')
 
-store = pd.HDFStore('complited_data.h5')
+store = pd.HDFStore('compiled_data.h5')
 store['df'] = df
 
 #%%
@@ -85,20 +85,22 @@ from imp import reload
 from my_package import data_processing as dp
 reload(dp)
 
-df = pd.read_csv('complited_data.csv', sep = '\t', index_col = 0)
+df = pd.read_csv('compiled_data.csv', sep = '\t', index_col = 0)
 df
 
 #%%
-# calculate the average thickness fo each segment
-grouped_data = df.groupby([df['objectID'], df['Segment ID']])
-grouped_mean = grouped_data.mean()
-objectname = list(np.unique(grouped_mean.index.get_level_values(0)))
+## calculate the average thickness fo each segment
+grouped_data = df['thickness'].groupby([df['objectID'], df['Segment ID']])
+grouped_thickness_mean = grouped_data.mean()
+
+grouped_thickness_mean
+
+## get onject name 
+objectname = list(np.unique(grouped_thickness_mean.index.get_level_values(0)))
 objectname
-# grouped_mean.loc[objectname[0]]
-grouped_mean
 
 #%%
-# plot the tickness of each segment
+# plot the thickness of each segment
 
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -107,64 +109,244 @@ import itertools
 sns.set()
 
 print(objectname)
-normed_par = 1
-n_bins=range(0, 200, 2)
-'''
-color_palette = np.unique(bokeh.palettes.Paired[12])
-colors = itertools.cycle(color_palette)
-'''
+objectname2 = ['Hypoxia', 'Normoxia']
+range_max = int(np.ceil(max(grouped_thickness_mean)))
+n_bins=range(0, range_max, 2)
 color = ['red', 'blue']
 
+normed_par = 1
 for i in range(len(objectname)):
     print(objectname[i])
     print(color[i])
     
-    plt.hist(grouped_mean['thickness'].loc[objectname[i]], n_bins, alpha=0.5, label = objectname[i], \
+    plt.hist(grouped_thickness_mean.loc[objectname[i]], n_bins, alpha=0.5, label = objectname2[i], \
             normed=normed_par, color = color[i])
     
-plt.xlim(left=0, right=200)
-plt.xlabel('thickness (µm)')
+plt.xlim(left=0, right=range_max)
+plt.xlabel('Thickness (µm)')
 plt.ylabel('Probability')
 plt.legend(loc='upper right')
-plt.show()
+plt.savefig('segment_thickness_prob.png', dpi = 300)
+plt.close()
+
+normed_par = 0
+for i in range(len(objectname)):
+    print(objectname[i])
+    print(color[i])
+    
+    plt.hist(grouped_thickness_mean.loc[objectname[i]], n_bins, alpha=0.5, label = objectname2[i], \
+            normed=normed_par, color = color[i])
+    
+plt.xlim(left=0, right=range_max)
+plt.xlabel('Thickness (µm)')
+plt.ylabel('Counts')
+plt.legend(loc='upper right')
+plt.savefig('segment_thickness_counts.png', dpi = 300)
+plt.close()
 
 #%%
 # calculate the length fo each segment
+import numpy as np
+import pandas as pd
+import os
+from imp import reload 
+from my_package import data_processing as dp
+reload(dp)
 
-temp = df.loc[df['objectID'] == objectname[1]].loc[df['Segment ID'] == 1]
-temp
-temp_1 = temp.iloc[0:len(temp)-1]
-temp_1
-temp_2 = temp.iloc[1:len(temp)]
-temp_2
+length_sum = dp.distance_sum(df, objectname)
+length_sum
 
-temp_2 = temp_2.set_index(temp_1.index.values)
-temp_2
-
-data = temp_2.loc[:, ('X Coord', 'Y Coord', 'Z Coord')] - temp_1.loc[:, ('X Coord', 'Y Coord', 'Z Coord')]
-data['length'] = np.sqrt(data['X Coord']**2 + data['Y Coord']**2 + data['Z Coord']**2)
-total_seg_length = sum(data['length'])
-total_seg_length
+#%%
+#save file
+length_sum.to_csv('compiled_data_length.csv', sep='\t')
 
 
 #%%
-# n, bins, patches = plt.hist(data_point['thickness'], 50, normed=1, facecolor='green', alpha=0.75)
-# plt.xlabel('thickness (µm)')
-# plt.ylabel('Probability')
-# plt.show()
-# plt.savefig('thickness_histogram.png')
-objectname = np.unique(combined_data_point['objectID'])
+# plot the length of each segment
 
+import matplotlib.pyplot as plt
+import seaborn as sns
+import bokeh.palettes
+import itertools
+sns.set()
 
-x1 = combined_data_point.loc[combined_data_point['objectID'] == objectname[0], 'thickness']
-x2 = combined_data_point.loc[combined_data_point['objectID'] == objectname[1], 'thickness']
-n_bins=range(0, 200, 2)
+print(objectname)
+
+objectname2 = ['Hypoxia', 'Normoxia']
+range_max = int(np.ceil(max(length_sum['seg_length'])))
+n_bins=range(0, range_max, 20 )
+color = ['red', 'blue']
 
 normed_par = 1
-plt.hist(x1, n_bins, alpha=0.5, label = objectname[0], normed=normed_par)
-plt.hist(x2, n_bins, alpha=0.5, label = objectname[1], normed=normed_par)
-plt.xlim(left=0, right=200)
-plt.xlabel('thickness (µm)')
+for i in range(len(objectname)):
+    print(objectname[i])
+    print(color[i])
+    
+    plt.hist(length_sum['seg_length'].loc[length_sum['objectID'] == objectname[i]], \
+            n_bins, alpha=0.5, label = objectname2[i], \
+            normed=normed_par, color = color[i])
+    
+plt.xlim(left=0, right=range_max)
+plt.xlabel('Length (µm)')
 plt.ylabel('Probability')
 plt.legend(loc='upper right')
-plt.show()
+#plt.show()
+plt.savefig('segment_length_prob.png', dpi = 300)
+plt.close()
+
+normed_par = 0
+for i in range(len(objectname)):
+    print(objectname[i])
+    print(color[i])
+    
+    plt.hist(length_sum['seg_length'].loc[length_sum['objectID'] == objectname[i]], \
+            n_bins, alpha=0.5, label = objectname2[i], \
+            normed=normed_par, color = color[i])
+
+plt.xlim(left=0, right=range_max)
+plt.xlabel('Length (µm)')
+plt.ylabel('Counts')
+plt.legend(loc='upper right')
+#plt.show()
+plt.savefig('segment_length_counts.png', dpi = 300)
+plt.close()
+
+#%%
+##################
+# scatter plot
+grouped_thickness_mean
+thickness_df = grouped_thickness_mean.reset_index()
+thickness_df
+thickness_df.shape
+
+length_sum.shape
+length_sum
+
+data = pd.merge(thickness_df, length_sum, on = ['objectID', 'Segment ID'])
+data
+
+objectname2 = ['Hypoxia', 'Normoxia']
+color = ['red', 'blue']
+
+
+for i in range(len(objectname)):
+    print(objectname[i])
+    print(color[i])    
+    plt.scatter(data['thickness'].loc[data['objectID'] == objectname[i]], \
+                data['seg_length'].loc[data['objectID'] == objectname[i]], \
+                color = color[i], alpha=0.5, label = objectname2[i], s= 3)
+
+plt.xlabel('Thickness (µm)')
+plt.ylabel('Length (µm)')
+plt.legend(loc=1)
+plt.savefig('scatter.png', dpi = 300)
+plt.close()
+
+
+
+#%%
+##################
+# create cumulative probability 
+range_max = int(np.ceil(max(data['thickness'])))
+print(range_max)
+
+cumulative_data_thickness = {}
+for i in range(len(objectname)):
+    print(objectname[i])
+    print(color[i])  
+
+    data_thickness = data['thickness'].loc[data['objectID'] == objectname[i]]
+    
+    n_bins=list(range(0, range_max, 2))
+    n_bins
+    counts, bin_edges = np.histogram(data_thickness, bins = n_bins, normed = True)
+    
+    temp_data = {
+                'counts': counts,
+                'bin_edges': bin_edges,
+                }
+    cumulative_data_thickness[objectname[i]] = temp_data
+
+
+range_max = int(np.ceil(max(data['seg_length'])))
+print(range_max)
+
+cumulative_data_length = {}
+for i in range(len(objectname)):
+    print(objectname[i])
+    print(color[i])  
+
+    data_length = data['seg_length'].loc[data['objectID'] == objectname[i]]
+    
+    n_bins=list(range(0, range_max, 20))
+    n_bins
+    counts, bin_edges = np.histogram(data_length, bins = n_bins, normed = True)
+    
+    temp_data = {
+                'counts': counts,
+                'bin_edges': bin_edges,
+                }
+    cumulative_data_length[objectname[i]] = temp_data
+
+#%%
+# plot cumulative distrubtion
+range_max = int(np.ceil(max(data['thickness'])))
+range_max
+objectname2 = ['Hypoxia', 'Normoxia']
+color = ['red', 'blue']
+
+for i in range(len(objectname)):
+    print(objectname[i])
+    print(color[i])  
+    cdf = np.cumsum(cumulative_data_thickness[objectname[i]]['counts'])
+    bin_edges = cumulative_data_thickness[objectname[i]]['bin_edges']
+    plt.plot(bin_edges[1:], cdf/cdf[-1], label = objectname2[i], color = color[i])
+
+plt.xlim(left=0, right=range_max)
+plt.xlabel('Thickness (µm)')
+plt.ylabel('Probability')
+plt.legend(loc='bottom right')
+plt.savefig('segment_thickness_cumprob.png', dpi = 300)
+plt.close()
+
+range_max = int(np.ceil(max(data['seg_length'])))
+range_max
+objectname2 = ['Hypoxia', 'Normoxia']
+color = ['red', 'blue']
+
+for i in range(len(objectname)):
+    print(objectname[i])
+    print(color[i])  
+    cdf = np.cumsum (cumulative_data_length[objectname[i]]['counts'])
+    bin_edges = cumulative_data_length[objectname[i]]['bin_edges']
+    plt.plot(bin_edges[1:], cdf/cdf[-1], label = objectname2[i], color = color[i])
+
+plt.xlim(left=0, right=range_max)
+plt.xlabel('Thickness (µm)')
+plt.ylabel('Probability')
+plt.legend(loc='bottom right')
+plt.savefig('segment_length_cumprob.png', dpi = 300)
+plt.close()
+
+#%%
+# statistic 
+# ks-test
+
+from scipy import stats
+ks_result_thickness = stats.ks_2samp(\
+                        cumulative_data_thickness[objectname[0]]['counts'], \
+                        cumulative_data_thickness[objectname[1]]['counts'])
+ks_result_thickness
+
+ks_result_length = stats.ks_2samp(\
+                        cumulative_data_length[objectname[0]]['counts'], \
+                        cumulative_data_length[objectname[1]]['counts'])
+ks_result_length
+
+
+# print size
+data.shape
+print(objectname[0])
+print(objectname[1])
+print(data['thickness'].loc[data['objectID'] == objectname[0]].shape)
+print(data['thickness'].loc[data['objectID'] == objectname[1]].shape)

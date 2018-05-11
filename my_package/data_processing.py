@@ -43,3 +43,40 @@ def listdir_nohidden(path):
         if (not f.startswith('.') and not f.startswith('~')):
             path_list.append(f)
     return path_list   
+
+
+def distance_sum(df, objectname, key1 = 'objectID', key2 = 'Segment ID'):
+    combined_data = pd.DataFrame([])  
+    # for m in range(2):
+    for m in range(len(objectname)):
+        segmentname = np.unique(df[key2].loc[df[key1] == objectname[m]])
+        print(segmentname)
+        # for n in range(5):
+        for n in range(len(segmentname)):
+            # create temporary data sheet
+            print(objectname[m])
+            print(segmentname[n])
+            temp_data = df.loc[df[key1] == objectname[m]].loc[df[key2] == segmentname[n]]
+            
+            temp_data_1 = temp_data.iloc[0:(len(temp_data)-1)]
+            temp_data_1 = temp_data_1.reset_index()
+            # temp_data_1
+
+            temp_data_2 = temp_data.iloc[1:len(temp_data)]
+            temp_data_2 = temp_data_2.reset_index()
+            # temp_data_2
+
+            # calculate distance between points
+            data = temp_data_2.loc[:, ('X Coord', 'Y Coord', 'Z Coord')] - temp_data_1.loc[:, ('X Coord', 'Y Coord', 'Z Coord')]
+            data['length'] = np.sqrt(data['X Coord']**2 + data['Y Coord']**2 + data['Z Coord']**2)
+            
+            # return total length
+            total_seg_length = sum(data['length'])
+            
+            temp_data_result = {'objectID': [objectname[m]], \
+                                'Segment ID': [segmentname[n]], \
+                                'seg_length': [total_seg_length]}
+            temp_data_result_df = pd.DataFrame(temp_data_result)
+            combined_data = combined_data.append(temp_data_result_df, ignore_index = True)
+            
+    return combined_data
