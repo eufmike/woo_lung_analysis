@@ -123,10 +123,10 @@ for i in range(len(objectname)):
             normed=normed_par, color = color[i])
     
 plt.xlim(left=0, right=range_max)
-plt.xlabel('Thickness (µm)')
+plt.xlabel('Radius (µm)')
 plt.ylabel('Probability')
 plt.legend(loc='upper right')
-plt.savefig('segment_thickness_prob.png', dpi = 300)
+plt.savefig('segment_radius_prob.png', dpi = 300)
 plt.close()
 
 normed_par = 0
@@ -138,10 +138,10 @@ for i in range(len(objectname)):
             normed=normed_par, color = color[i])
     
 plt.xlim(left=0, right=range_max)
-plt.xlabel('Thickness (µm)')
+plt.xlabel('Radius (µm)')
 plt.ylabel('Counts')
 plt.legend(loc='upper right')
-plt.savefig('segment_thickness_counts.png', dpi = 300)
+plt.savefig('segment_radius_counts.png', dpi = 300)
 plt.close()
 
 #%%
@@ -160,6 +160,9 @@ length_sum
 #save file
 length_sum.to_csv('compiled_data_length.csv', sep='\t')
 
+#%%
+
+length_sum = pd.read_csv('compiled_data_length.csv', sep = '\t', index_col = 0)
 
 #%%
 # plot the length of each segment
@@ -236,7 +239,7 @@ for i in range(len(objectname)):
                 data['seg_length'].loc[data['objectID'] == objectname[i]], \
                 color = color[i], alpha=0.5, label = objectname2[i], s= 3)
 
-plt.xlabel('Thickness (µm)')
+plt.xlabel('Radius (µm)')
 plt.ylabel('Length (µm)')
 plt.legend(loc=1)
 plt.savefig('scatter.png', dpi = 300)
@@ -303,10 +306,10 @@ for i in range(len(objectname)):
     plt.plot(bin_edges[1:], cdf/cdf[-1], label = objectname2[i], color = color[i])
 
 plt.xlim(left=0, right=range_max)
-plt.xlabel('Thickness (µm)')
+plt.xlabel('Radius (µm)')
 plt.ylabel('Probability')
 plt.legend(loc='bottom right')
-plt.savefig('segment_thickness_cumprob.png', dpi = 300)
+plt.savefig('segment_radius_cumprob.png', dpi = 300)
 plt.close()
 
 range_max = int(np.ceil(max(data['seg_length'])))
@@ -322,7 +325,7 @@ for i in range(len(objectname)):
     plt.plot(bin_edges[1:], cdf/cdf[-1], label = objectname2[i], color = color[i])
 
 plt.xlim(left=0, right=range_max)
-plt.xlabel('Thickness (µm)')
+plt.xlabel('Length (µm)')
 plt.ylabel('Probability')
 plt.legend(loc='bottom right')
 plt.savefig('segment_length_cumprob.png', dpi = 300)
