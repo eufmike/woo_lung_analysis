@@ -58,8 +58,8 @@ def BranchLabel(df_nodes, df_segments):
 
         ls_done_tmp, branch_lvl_tmp = BranchFinder(df_nodes_tmp, df_segments_tmp)            
         branch_lvl[branch_label] = branch_lvl_tmp 
+        
         ls_done_tmp.sort()
-
         ls_done[branch_label] = ls_done_tmp
         
         print(ls_done_tmp)
@@ -69,12 +69,12 @@ def BranchLabel(df_nodes, df_segments):
         # display(df_nodes_tmp)
         # df_nodes_tmp = df_nodes_tmp.reset_index(drop=True)
 
-        i = len(ls_done_tmp)
-        pbar1.update(i)
+        pbar1.update(len(ls_done_tmp))
         print('df length: {}'.format(len(df_nodes_tmp)))
-
-        if len(df_nodes_tmp) == 0:
-            break
+        
+        i = len(df_nodes_tmp)
+        # if len(df_nodes_tmp) == 0:
+        #    break
 
         branch_label += 1
 
@@ -154,10 +154,6 @@ def BranchFinder(df_nodes_tmp, df_segments_tmp):
         
         level += 1
         i = len(childrens)
-        
-        # pbar2.update(len(childrens))
-
-    # pbar2.close()
 
     return(ls_done, branch_lvl)        
     
