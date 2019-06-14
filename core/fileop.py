@@ -11,10 +11,17 @@ def ListFiles(path, extension = None):
 			if (not file_name.startswith('.')) & (file_name.endswith(extension)):
 				file_name_base = file_name.replace(extension, '')
 				filepath_tmp =  os.path.join(directory, file_name)
-				filelist.append(file_name_base)
+				filelist.append(file_name_base + extension)
 				fileabslist.append(filepath_tmp)
 	
 	return filelist, fileabslist
+
+def ListDirs(path):
+    folderlist = []
+    for directory in os.listdir(path):
+        if (not directory.startswith('.')):
+            folderlist.append(directory)
+    return 
 
 def DirCheck(targetpaths):
 	"""
