@@ -1,0 +1,18 @@
+foldername_01,img_ID,dir,foldername_02,filename,treatment,condition,data_filename
+sample_set_01,1,sample_set_01,Tiff-hypoxia,hypoxia_01,hypoxia,good,
+sample_set_01,2,sample_set_01,Tiff-normoxia,normoxia_01,normoxia,good,
+sample_set_02,3,raw/06-29-18,HEV5-Normoxia/HEV5-Normoxia-0_4x,HEV5-Normoxia-0_4x_2018-06-29_123723,normoxia,bad,
+sample_set_02,4,sample_set_02,sample_001,sample_001,normoxia,bad,
+sample_set_02,5,sample_set_02,sample_002,sample_002,hypoxia,bad,
+sample_set_03,6,sample_set_03,sample_set_03,HES6-Hypoxia,hypoxia,bad,
+sample_set_03,7,sample_set_03,sample_set_03,HES7-Normoxia,normoxia,bad,
+sample_set_04,8,FOB5-Hypoxia,FOB5-Hypoxia,FOB5-Hypoxia_2019-01-07_092155,hypoxia,good,
+sample_set_04,9,FOB7-Hypoxia,FOB7-Hypoxia,FOB7-Hypoxia_2019-01-07_154008,hypoxia,good,
+sample_set_04,10,Hypoxia6-2,Hypoxia6,Hypoxia6_2019-01-04_150913,hypoxia,good,
+sample_set_05,11,FOR3-DFF-normoxia,,,normoxia,good,
+sample_set_05,12,FOR4-DFF-normoxia,,,normoxia,good,
+sample_set_06,13,FOR5-DFF-normoxia,,,normoxia,good,
+sample_set_07,14,FOR1 DCKO Hypo,,,hypoxia,good,
+sample_set_07,15,FOR8 DCKO Hypo,,,hypoxia,good,
+sample_set_08,16,FOR6 DCKO Hypo,,,hypoxia,good,16_FOR6-DCKO-Hypoxia
+sample_set_09,17,FOR7 DFF Hypo,,,hypoxia,good,17_FOR7-DFF-Hypoxia
