@@ -164,14 +164,20 @@ for i in subfolder:
 #%%
 # load fileinfo
 fileinfo = pd.read_csv(os.path.join(path, 'par', 'lung_file_idx.csv'))
-make_individul_plots(ippath, oppath, fileinfo)
+columns = ['length', 'thickness']
+xlabel = ['Length (µm)', 'Thickness (µm)']
+make_individul_plots(ippath, oppath, fileinfo, columns, xlabel)
 
 #%%
 # plot merged plot for length and thickness
-make_merged_plots(ippath, oppath, fileinfo)
+columns = ['length', 'thickness']
+xlabel = ['Length (µm)', 'Thickness (µm)']
+make_merged_plots(ippath, oppath, fileinfo, columns, xlabel, frequency = False)
+
+#%%
+make_merged_plots(ippath, oppath, fileinfo, columns, xlabel, frequency = True)
+
+
 
 
 #%%
-
-
-
