@@ -65,7 +65,7 @@ def convert_xml_csv(ippath, oppath):
 # To run the code, please change `path` to the directory hosts the raw data. 
 
 #%%
-path = '/Users/major_minor1982/Documents/WUCCI/data/test'
+path = '/Volumes/LaCie_DataStorage/Woo-lungs/2019'
 ipdir = 'raw'
 opdir = 'csv'
 ippath = os.path.join(path, ipdir)
@@ -113,7 +113,7 @@ def stats_calculator(ippath, oppath):
 # To run the code, please change `path` to the directory hosts the raw data. 
 
 #%%
-path = '/Users/major_minor1982/Documents/WUCCI/data/test'
+path = '/Volumes/LaCie_DataStorage/Woo-lungs/2019'
 ipdir = 'csv'
 opdir = 'csv'
 ippath = os.path.join(path, ipdir)
@@ -144,135 +144,13 @@ stats_calculator(ippath, oppath)
 import matplotlib.pyplot as plt
 import matplotlib.style as style
 style.use('default')
-from core.mkplot import GroupImg, FindRange, IndividualHisto 
-
-# functions
-def make_individul_plots(ippath, oppath):
-    # extract file list
-    imglist = [x for x in os.listdir(ippath) if not x.startswith('.')]
-    # get range
-    length_range, thickness_range = FindRange(ippath)
-    # print(length_range, thickness_range)
-    
-    # create labels
-    xlabel = ['Length (µm)', 'Thickness (µm)'] 
-
-    # make histogram for individual dataset
-    for img in imglist:
-        
-        df_segments_s = pd.read_csv(os.path.join(ippath, img, 'segments_s.csv'))
-        
-        # histogram for average length  
-        plt.figure(figsize=(5, 5))
-        
-        ax = IndividualHisto(df_segments_s, column = 'length', bin_range = length_range)
-        ax.set_xlabel(xlabel[0])
-        ax.set_ylabel('Frequency (%)')
-                   
-        DirCheck(os.path.join(oppath, 'histo', 'length'))
-        opfilename = os.path.join(oppath, 'histo', 'length', img + '.png')
-        plt.savefig(opfilename)
-        plt.close()
-
-        # histogram for average thickness    
-        plt.figure(figsize=(5, 5))
-
-        ax = IndividualHisto(df_segments_s, column = 'thickness', bin_range = thickness_range)
-        ax.set_xlabel(xlabel[1])
-        ax.set_ylabel('Frequency (%)')
-        
-        DirCheck(os.path.join(oppath, 'histo', 'thickness'))
-        opfilename = os.path.join(oppath, 'histo', 'thickness', img + '.png')
-        plt.savefig(opfilename)
-        plt.close()   
-
-    return    
-
-def make_merged_plots(ippath, oppath):
-    # extract file list
-    imglist = [x for x in os.listdir(ippath) if not x.startswith('.')]
-    # get range
-    length_range, thickness_range = find_range(ippath)
-    
-    # create labels
-    xlabel = ['Length (µm)', 'Thickness (µm)']
-    
-    # treatment
-    grp_imglist = GroupImg(ippath, fileinfo)
-    
-    plt.figure(figsize=(5, 5))
-    dflist = []
-    for treatment, imgs in grp_imglist.items():
-        binsize = 100
-        
-        bins = np.linspace(length_range[0], length_range[1], binsize) 
-        
-        for img in imgs:
-            df_segments_s = pd.read_csv(os.path.join(ippath, img, 'segments_s.csv'))
-            df_segments_s['bins'] = pd.cut(df_segments_s['length'], bins = bins)
-            df_bins_count = df_segments_s.groupby('bins').size()
-            df_bins_count = df_bins_count.reset_index()
-            df_bins_count = df_bins_count.iloc[:, 1]
-            dflist.append(df_bins_count)
-        
-        df_tmp = pd.concat(dflist, axis = 1)
-        dfarray = np.array(df_tmp)
-        mean = dfarray.mean(axis = 1, keepdims = True)
-        #print(mean)
-        sem = stats.sem(dfarray, axis = 1)
-        #print(sem)
-        ax1 = plt.subplot(111)
-        bins_length = np.array([bins[0:-1]]).T
-        # print(bins_length.shape)
-        # print(mean.shape)
-        ax1.errorbar(bins_length, mean, yerr = sem, alpha = 0.2)
-        ax1.set_xlabel(xlabel[0])
-        ax1.set_ylabel('Frequency (%)')
-    
-        opfilename = os.path.join(oppath, 'histo_summary', treatment + 'length.png')
-        plt.savefig(opfilename)
-        plt.show()
-        plt.close()
-    
-    plt.figure(figsize=(5, 5))
-    dflist = []
-    for treatment, imgs in grp_imglist.items():
-        binsize = 100
-        
-        bins = np.linspace(thickness_range[0], thickness_range[1], binsize) 
-        
-        for img in imgs:
-            df_segments_s = pd.read_csv(os.path.join(ippath, img, 'segments_s.csv'))
-            df_segments_s['bins'] = pd.cut(df_segments_s['thickness'], bins = bins)
-            df_bins_count = df_segments_s.groupby('bins').size()
-            df_bins_count = df_bins_count.reset_index()
-            df_bins_count = df_bins_count.iloc[:, 1]
-            dflist.append(df_bins_count)
-        
-        df_tmp = pd.concat(dflist, axis = 1)
-        dfarray = np.array(df_tmp)
-        mean = dfarray.mean(axis = 1, keepdims = True)
-        #print(mean)
-        sem = stats.sem(dfarray, axis = 1)
-        #print(sem)
-        ax1 = plt.subplot(111)
-        bins_length = np.array([bins[0:-1]]).T
-        # print(bins_length.shape)
-        # print(mean.shape)
-        ax1.errorbar(bins_length, mean, yerr = sem, alpha = 0.2)
-        ax1.set_xlabel(xlabel[1])
-        ax1.set_ylabel('Frequency (%)')
-        
-        opfilename = os.path.join(oppath, 'histo_summary', treatment + 'thickness.png')
-        plt.savefig(opfilename)
-        plt.show()
-        plt.close()
-
-    return
+import scipy.stats as stats
+from core.mkplot import GroupImg, FindRange, IndividualHisto
+from core.mkplot import make_individul_plots, make_merged_plots
 
 
 #%%
-path = '/Users/major_minor1982/Documents/WUCCI/data/test'
+path = '/Volumes/LaCie_DataStorage/Woo-lungs/2019'
 ipdir = 'csv'
 opdir1 = 'plot'
 opdir2 = 'histogram'
@@ -283,14 +161,14 @@ for i in subfolder:
     oppath_sub = os.path.join(oppath, i)
     DirCheck(oppath_sub)
 
-
 #%%
 # load fileinfo
 fileinfo = pd.read_csv(os.path.join(path, 'par', 'lung_file_idx.csv'))
-# display(fileinfo)
+make_individul_plots(ippath, oppath, fileinfo)
 
-make_individul_plots(ippath, oppath)
-make_merged_plots(ippath, oppath)
+#%%
+# plot merged plot for length and thickness
+make_merged_plots(ippath, oppath, fileinfo)
 
 
 #%%
