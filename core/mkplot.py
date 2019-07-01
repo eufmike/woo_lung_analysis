@@ -6,7 +6,7 @@ from collections import defaultdict
 import matplotlib.pyplot as plt
 
 def GroupImg(ippath, fileinfo):
-    # group imgs bu fileinfo    
+    # group imgs from fileinfo    
     imglist = [x for x in os.listdir(ippath) if not x.startswith('.')]
     
     grped_imglist = defaultdict(list)
