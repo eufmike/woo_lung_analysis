@@ -45,13 +45,13 @@ def IndividualHisto(df, column, binsize = 100, bin_range = None):
     
     return ax1
 
-def make_individul_plots(ippath, oppath, fileinfo, columns, xlabel):
+def make_individul_plots(ippath, oppath, fileinfo, columns):
     # extract file list
     imglist = [x for x in os.listdir(ippath) if not x.startswith('.')]
     
-    for idx, column in enumerate(columns):
+    for key, value in columns.items():
         # get range
-        data_range = FindRange(ippath, variable = column)
+        data_range = FindRange(ippath, variable = key)
         
         # make histogram for individual dataset
         for img in imglist:
@@ -61,17 +61,17 @@ def make_individul_plots(ippath, oppath, fileinfo, columns, xlabel):
             # histogram for average length  
             plt.figure(figsize=(5, 5))
             
-            ax = IndividualHisto(df_segments_s, column = column, bin_range = data_range)
-            ax.set_xlabel(xlabel[idx])
+            ax = IndividualHisto(df_segments_s, column = key, bin_range = data_range)
+            ax.set_xlabel(value['x_label'])
             ax.set_ylabel('Frequency (%)')
                     
-            DirCheck(os.path.join(oppath, 'histo', column))
-            opfilename = os.path.join(oppath, 'histo', column, img + '.png')
+            DirCheck(os.path.join(oppath, 'histo', value['file_label']))
+            opfilename = os.path.join(oppath, 'histo', value['file_label'], img + '.png')
             plt.savefig(opfilename)
             plt.close()
     return
 
-def make_merged_plots(ippath, oppath, fileinfo, columns, xlabel, frequency = False):
+def make_merged_plots(ippath, oppath, fileinfo, columns, frequency = False):
     # extract file list
     imglist = [x for x in os.listdir(ippath) if not x.startswith('.')]
 
@@ -89,9 +89,9 @@ def make_merged_plots(ippath, oppath, fileinfo, columns, xlabel, frequency = Fal
         'counts': 'Counts',
     }
 
-    for idx, column in enumerate(columns):
+    for key, value in columns.items():
         # get range
-        data_range = FindRange(ippath, variable = column)    
+        data_range = FindRange(ippath, variable = key)    
 
         fig, ax = plt.subplots(1, 1, figsize=(5,5))
         dflist = []
@@ -101,7 +101,7 @@ def make_merged_plots(ippath, oppath, fileinfo, columns, xlabel, frequency = Fal
 
             for img in imgs:
                 df_segments_s = pd.read_csv(os.path.join(ippath, img, 'segments_s.csv'))
-                df_segments_s['bins'] = pd.cut(df_segments_s[column], bins = bins)
+                df_segments_s['bins'] = pd.cut(df_segments_s[key], bins = bins)
                 df_bins_count = df_segments_s.groupby('bins').size()
                 df_bins_count = df_bins_count.reset_index()
                 df_bins_count = df_bins_count.iloc[:, 1]
@@ -118,13 +118,13 @@ def make_merged_plots(ippath, oppath, fileinfo, columns, xlabel, frequency = Fal
             bins_length = np.array([bins[0:-1]]).T
             
             ax.errorbar(bins_length, array_mean, yerr = array_sem, alpha = 0.8)
-            ax.set_xlabel(xlabel[idx])
+            ax.set_xlabel(value['x_label'])
             ax.set_ylabel(hist_type_dic[hist_type])
             # ax.spines['right'].set_visible(False)
             # ax.spines['top'].set_visible(False)
 
         ax.legend(grp_imglist.keys())
-        opfilename = os.path.join(oppath, 'histo_summary', 'histo_' + hist_type + '_' + column + '.png')
+        opfilename = os.path.join(oppath, 'histo_summary', 'histo_' + hist_type + '_' + value['file_label'] + '.png')
         plt.savefig(opfilename)
         plt.show()
         plt.close()

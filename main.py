@@ -137,7 +137,17 @@ stats_calculator(ippath, oppath)
 #      3. `histo_summary/length.png`: histogram in line plot style
 #      4. `histo_summary/thickness.png`: histogram in line plot style
 #  
-#  `SegStats` extracts euclidean coordinates and thickness of each point, then calculate the total length and average thickness. 
+#  `SegStats` extracts euclidean coordinates and thickness of each point, then calculate 
+# the total length and average thickness. 
+# 
+# 
+# In the ouputs, the code renames "thickness" to "radius" to avoid confusion. Quotes from 
+# Amira User's Manual
+# > As an estimate of the local thickness, the closest distance to the label 
+# boundary (boundary distance map) is stored at every point in the *Spatial Graph*. 
+# The attribute is named *thickness* and constitutes the *radius* of the circular cross-section 
+# of the filament at a given point of the centerline.
+
 
 #%%
 # import depandencies
@@ -164,18 +174,25 @@ for i in subfolder:
 #%%
 # load fileinfo
 fileinfo = pd.read_csv(os.path.join(path, 'par', 'lung_file_idx.csv'))
-columns = ['length', 'thickness']
-xlabel = ['Length (µm)', 'Thickness (µm)']
-make_individul_plots(ippath, oppath, fileinfo, columns, xlabel)
+#columns = ['length', 'thickness']
+#xlabel = ['Length (µm)', 'Radius (µm)']
+columns = {
+    'length': {
+        'x_label': 'Length (µm)',
+        'file_label': 'length',
+    },
+    'thickness': {
+        'x_label': 'Radius (µm)',
+        'file_label': 'radius',
+    },
+}
+make_individul_plots(ippath, oppath, fileinfo, columns)
 
 #%%
-# plot merged plot for length and thickness
-columns = ['length', 'thickness']
-xlabel = ['Length (µm)', 'Thickness (µm)']
-make_merged_plots(ippath, oppath, fileinfo, columns, xlabel, frequency = False)
-
-#%%
-make_merged_plots(ippath, oppath, fileinfo, columns, xlabel, frequency = True)
+# plot merged histogram sin counts
+make_merged_plots(ippath, oppath, fileinfo, columns, frequency = False)
+# plot merged histogram in frequency 
+make_merged_plots(ippath, oppath, fileinfo, columns, frequency = True)
 
 
 
