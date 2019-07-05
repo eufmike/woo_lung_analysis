@@ -191,19 +191,19 @@ columns = {
 make_individul_plots(ippath, oppath, fileinfo, columns)
 
 #%%
-# plot merged histogram sin counts
+# plot merged histogram in counts
 make_merged_plots(ippath, oppath, fileinfo, columns, frequency = False, x_max_factor = 0.07)
 # plot merged histogram in frequency 
 make_merged_plots(ippath, oppath, fileinfo, columns, frequency = True, x_max_factor = 0.07)
 
 #%%
-# plot merged histogram sin counts
+# plot merged histogram in counts
 make_merged_plots(ippath, oppath, fileinfo, columns, frequency = False, x_max_factor = 0.2)
 # plot merged histogram in frequency 
 make_merged_plots(ippath, oppath, fileinfo, columns, frequency = True, x_max_factor = 0.2)
 
 #%%
-# plot merged histogram sin counts
+# plot merged histogram in counts
 make_merged_plots(ippath, oppath, fileinfo, columns, frequency = False, x_max_factor = 1)
 # plot merged histogram in frequency 
 make_merged_plots(ippath, oppath, fileinfo, columns, frequency = True, x_max_factor = 1)
