@@ -190,6 +190,8 @@ columns = {
 # plot individual histogram
 make_individul_plots(ippath, oppath, fileinfo, columns)
 
+#%% [markdown]
+# Create plots with x-axis in different scales
 #%%
 # plot merged histogram in counts
 make_merged_plots(ippath, oppath, fileinfo, columns, frequency = False, x_max_factor = 0.07)
