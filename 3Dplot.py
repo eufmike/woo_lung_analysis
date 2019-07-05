@@ -22,12 +22,12 @@ def Cmap2RGB(cmap_name):
     cmaplist = [cmap(i) for i in range(cmap.N)]
     return cmaplist
 
-ippath = '/Volumes/LaCie_DataStorage/Woo-lungs/2019/data/normoxia/'
+ippath = '/Volumes/LaCie_DataStorage/Woo-lungs/2019/csv/2_normoxia_01/'
 var = ['df_nodes', 'df_points', 'df_segments']
-fl_names = ['lung_vs_002_nodes.csv', 'lung_vs_002_points.csv', 'lung_vs_002_segments.csv']
+fl_names = ['nodes.csv', 'points.csv', 'segments.csv']
 
-for idx in range(len(fl_names)):
-    exec("%s = pd.read_csv(os.path.join(ippath, '%s'))"%(var[idx], fl_names[idx]))
+for idx, val in enumerate(fl_names):
+    exec("%s = pd.read_csv(os.path.join(ippath, '%s'))"%(var[idx], val))
 
 # plot points
 point_x = df_points['X Coord']

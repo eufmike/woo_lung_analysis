@@ -12,10 +12,12 @@ def GroupImg(ippath, fileinfo):
     
     grped_imglist = defaultdict(list)
     
-    for img in imglist:
-        img_group = fileinfo[fileinfo['data_filename'] == img]['treatment'].item()
-        grped_imglist[img_group].append(img)
+    fileinfo['temp_group'] = fileinfo['genotype'] + '_' + fileinfo['treatment']
     
+    for img in imglist:
+        img_group = fileinfo[fileinfo['data_filename'] == img]['temp_group'].item()
+        grped_imglist[img_group].append(img)
+
     return grped_imglist
 
 def FindRange(ippath, variable):
@@ -35,9 +37,9 @@ def FindRange(ippath, variable):
     
     return(data_range)
 
-def IndividualHisto(df, column, binsize = 100, bin_range = None):
+def IndividualHisto(df, column, x_max_factor, binsize = 100, bin_range = None):
 
-    bins = np.linspace(bin_range[0], bin_range[1], binsize)    
+    bins = np.linspace(bin_range[0], bin_range[1] * x_max_factor, binsize)    
     data = df[column]
     ax1 = plt.subplot(111)
     ax1.hist(data, bins = bins, 
@@ -45,7 +47,7 @@ def IndividualHisto(df, column, binsize = 100, bin_range = None):
     
     return ax1
 
-def make_individul_plots(ippath, oppath, fileinfo, columns):
+def make_individul_plots(ippath, oppath, fileinfo, columns, x_max_factor = 1):
     # extract file list
     imglist = [x for x in os.listdir(ippath) if not x.startswith('.')]
     
@@ -61,7 +63,7 @@ def make_individul_plots(ippath, oppath, fileinfo, columns):
             # histogram for average length  
             plt.figure(figsize=(5, 5))
             
-            ax = IndividualHisto(df_segments_s, column = key, bin_range = data_range)
+            ax = IndividualHisto(df_segments_s, column = key, bin_range = data_range, x_max_factor = x_max_factor)
             ax.set_xlabel(value['x_label'])
             ax.set_ylabel('Frequency (%)')
                     
@@ -71,7 +73,7 @@ def make_individul_plots(ippath, oppath, fileinfo, columns):
             plt.close()
     return
 
-def make_merged_plots(ippath, oppath, fileinfo, columns, frequency = False):
+def make_merged_plots(ippath, oppath, fileinfo, columns, frequency = False, x_max_factor = 1):
     # extract file list
     imglist = [x for x in os.listdir(ippath) if not x.startswith('.')]
 
@@ -93,10 +95,10 @@ def make_merged_plots(ippath, oppath, fileinfo, columns, frequency = False):
         # get range
         data_range = FindRange(ippath, variable = key)    
 
-        fig, ax = plt.subplots(1, 1, figsize=(5,5))
+        fig, ax = plt.subplots(1, 1, figsize=(5,5), dpi = 300)
         dflist = []
         for treatment, imgs in grp_imglist.items():
-            binsize = 100
+            binsize = 200
             bins = np.linspace(data_range[0], data_range[1], binsize) 
 
             for img in imgs:
@@ -117,16 +119,18 @@ def make_merged_plots(ippath, oppath, fileinfo, columns, frequency = False):
             array_sem = stats.sem(dfarray, axis = 1)
             bins_length = np.array([bins[0:-1]]).T
             
-            ax.errorbar(bins_length, array_mean, yerr = array_sem, alpha = 0.8)
+            ax.errorbar(bins_length, array_mean, yerr = array_sem, alpha = 0.5)
             ax.set_xlabel(value['x_label'])
             ax.set_ylabel(hist_type_dic[hist_type])
-            # ax.spines['right'].set_visible(False)
-            # ax.spines['top'].set_visible(False)
-
+            ax.set_xlim(data_range[0] - (data_range[1]*x_max_factor - data_range[0]) * 0.05, data_range[1]*x_max_factor + (data_range[1]*x_max_factor - data_range[0]) * 0.05)
+            
         ax.legend(grp_imglist.keys())
-        opfilename = os.path.join(oppath, 'histo_summary', 'histo_' + hist_type + '_' + value['file_label'] + '.png')
+        opfilename = os.path.join(oppath, 'histo_summary', 'histo_' + hist_type + '_' +
+                                 value['file_label'] + '_' +
+                                 str(x_max_factor).replace('.', '_') +  
+                                 '.png')
         plt.savefig(opfilename)
-        plt.show()
+        # plt.show()
         plt.close()
 
     return
