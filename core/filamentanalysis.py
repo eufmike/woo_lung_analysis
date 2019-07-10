@@ -251,4 +251,14 @@ def DistanceSum(df, objectname, key1 = 'objectID', key2 = 'Segment ID'):
             
     return combined_data
 
+def PNSCount(df_pnt, df_nodes, df_segments):
+    #Returns the number of points, nodes, and segments
+    
+    counts = [len(df_pnt), len(df_nodes), len(df_segments)]
+    
+    
+    return counts
+    
+    
+    
 

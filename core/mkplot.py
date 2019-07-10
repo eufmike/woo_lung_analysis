@@ -48,6 +48,7 @@ def IndividualHisto(df, column, x_max_factor, binsize = 100, bin_range = None):
     return ax1
 
 def make_individul_plots(ippath, oppath, fileinfo, columns, x_max_factor = 1):
+    #print("1:" + oppath)
     # extract file list
     imglist = [x for x in os.listdir(ippath) if not x.startswith('.')]
     
@@ -57,7 +58,7 @@ def make_individul_plots(ippath, oppath, fileinfo, columns, x_max_factor = 1):
         
         # make histogram for individual dataset
         for img in imglist:
-            
+            #print("2:" + oppath)
             df_segments_s = pd.read_csv(os.path.join(ippath, img, 'segments_s.csv'))
             
             # histogram for average length  
