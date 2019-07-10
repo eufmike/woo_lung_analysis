@@ -57,7 +57,7 @@ def make_individul_plots(ippath, oppath, fileinfo, columns, x_max_factor = 1):
         data_range = FindRange(ippath, variable = key)
         
         # make histogram for individual dataset
-        for img in imglist:
+        for img in imglist :
             #print("2:" + oppath)
             df_segments_s = pd.read_csv(os.path.join(ippath, img, 'segments_s.csv'))
             
@@ -84,7 +84,7 @@ def make_merged_plots(ippath, oppath, fileinfo, columns, frequency = False, x_ma
     # histogram type
     if frequency: 
         hist_type = 'frequency'
-    else: 
+    else:  
         hist_type = 'counts'
     
     hist_type_dic = {
