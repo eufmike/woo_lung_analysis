@@ -136,4 +136,15 @@ def make_merged_plots(ippath, oppath, fileinfo, columns, frequency = False, x_ma
 
     return
 
+def SplitDict(ippath, fileinfo):
+    #Splits a {key[single]-value[list]} pair into [key[single]-value[single]]
+    #EX: {dog: [box,boy,knot]} --> [[dog, box],[dog,boy],[dog,knot]]
+    key_val_single = []
+    x = GroupImg(ippath, fileinfo)
 
+    for k, v in x.items():
+        for i in v:
+            key_val_single.append([k,i])
+            
+    return key_val_single
+    
