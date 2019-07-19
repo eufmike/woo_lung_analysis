@@ -90,9 +90,7 @@ convert_xml_csv(ippath, oppath)
 # load dependencies
 from core.filamentanalysis import SegStats, PNSCount
 
-from core.mkplot import SplitDict
-
-path = 'data'
+path = '/Volumes/LaCie_DataStorage/Woo-lungs/2019'
 ipdir = 'csv'
 ippath = os.path.join(path, ipdir)
 img_group = []
@@ -144,7 +142,7 @@ def stats_calculator(ippath, oppath):
 #  To run the code, please change `path` to the directory hosts the raw data.
 
 #%%
-path = 'data'
+path = '/Volumes/LaCie_DataStorage/Woo-lungs/2019'
 ipdir = 'csv'
 opdir = 'csv'
 ippath = os.path.join(path, ipdir)
@@ -190,7 +188,7 @@ from core.mkplot import make_individul_plots, make_merged_plots
 
 
 #%%
-path = 'data'
+path = '/Volumes/LaCie_DataStorage/Woo-lungs/2019'
 ipdir = 'csv'
 opdir1 = 'plot'
 opdir2 = 'histogram'
@@ -216,6 +214,8 @@ columns = {
         'file_label': 'radius',
     },
 }
+
+
 
 
 #%%
@@ -260,9 +260,10 @@ import pandas as pd
 import holoviews as hv
 from holoviews import opts, Cycle
 
+#%%
 hv.extension('bokeh')
 
-path = 'data'
+path = '/Volumes/LaCie_DataStorage/Woo-lungs/2019'
 ipfile = 'counts_combined.csv'
 ippath = (os.path.join(path, ipfile))
 
