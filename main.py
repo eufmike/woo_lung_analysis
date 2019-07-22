@@ -65,7 +65,7 @@ def convert_xml_csv(ippath, oppath):
 #  To run the code, please change `path` to the directory hosts the raw data.
 
 #%%
-path = '/Volumes/LaCie_DataStorage/Woo-lungs/2019'
+path = 'data'
 ipdir = 'raw'
 opdir = 'csv'
 ippath = os.path.join(path, ipdir)
@@ -90,7 +90,11 @@ convert_xml_csv(ippath, oppath)
 # load dependencies
 from core.filamentanalysis import SegStats, PNSCount
 
+<<<<<<< HEAD
 path = '/Volumes/LaCie_DataStorage/Woo-lungs/2019'
+=======
+path = 'data'
+>>>>>>> 1fd3da5523c1a1ce421f0b8bdba25c843e60404c
 ipdir = 'csv'
 ippath = os.path.join(path, ipdir)
 img_group = []
@@ -134,8 +138,7 @@ def stats_calculator(ippath, oppath):
         df_counts_combined['Names'] = names
         df_counts_combined['Genotype'] = img_group
         df_counts_combined.to_csv(os.path.join(path, countfilename_combined), index = False)
-            
-       
+                   
 
 #%% [markdown]
 #  ### Execution
@@ -247,12 +250,7 @@ make_merged_plots(ippath, oppath, fileinfo, columns, frequency = True, x_max_fac
 
 #%% [markdown]
 # # Part 4
-# 
 #     Plot the Points, Nodes, and Segment Count in Bokeh with Holoview
-#     
-#     
-# 
-# 
 
 #%%
 import numpy as np
@@ -291,7 +289,7 @@ from bokeh.palettes import brewer
 import bokeh.models as bmod
 
 counts = pd.read_csv(ippath)
-colors = brewer["Spectral"][len(counts.Genotype.unique())]
+colors = brewer["Spectral"][len(counts.Genotype.unique()) + 1]
 colormap = {counts.Genotype.unique()[i] : colors[i] for i in range(len(counts.Genotype.unique()))}
 colors = [colormap[x] for x in counts.Genotype]
 
@@ -307,3 +305,6 @@ point_grid = gridmatrix(iris_ds, chart_type=hv.Points)
     opts.NdOverlay(batched= False))
 
 
+
+
+#%%
