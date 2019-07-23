@@ -360,8 +360,6 @@ make_merged_plots_std(ippath_csv, oppath, fileinfo, columns, opdir = 'histo_summ
 
 
 
-
-
 #%% [markdown]
 # # Part 6
 #     Plot the Points, Nodes, and Segment Count in Bokeh with Holoview
