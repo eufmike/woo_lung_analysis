@@ -310,11 +310,11 @@ for i in uniques:
     g.map(plt.hist, 'thickness', density = True)
   
 #%% [markdown]
-# Part 5: histogram standardization 
+# ## Part 5: histogram standardization 
 # 
 
 #%% 
-from core.mkplot import histo_standardize
+from core.mkplot import histo_standardize, make_merged_plots_std
 
 path = '/Volumes/LaCie_DataStorage/Woo-lungs/2019'
 ipfile = 'counts_combined.csv'
@@ -322,6 +322,39 @@ ippath_stat = os.path.join(path, ipfile)
 ippath_csv = os.path.join(path, 'csv')
 
 histo_standardize(ippath_csv)
+
+#%% [markdown]
+# ## Part 6: Plots with standardize data
+#
+
+#%%
+path = '/Volumes/LaCie_DataStorage/Woo-lungs/2019'
+ipfile = 'counts_combined.csv'
+ippath_stat = os.path.join(path, ipfile)
+ippath_csv = os.path.join(path, 'csv')
+oppath = os.path.join(path, 'plot', 'histogram')
+DirCheck(oppath)
+
+columns = {
+    'length': {
+        'x_label': 'Standard Deviation',
+        'file_label': 'length',
+    },
+    'thickness': {
+        'x_label': 'Standard Deviation',
+        'file_label': 'radius',
+    },
+}
+
+
+make_merged_plots_std(ippath_csv, oppath, fileinfo, columns, opdir = 'histo_summary_std', filename = 'segments_s_std.csv', frequency = False, x_max_factor = 1)
+make_merged_plots_std(ippath_csv, oppath, fileinfo, columns, opdir = 'histo_summary_std', filename = 'segments_s_std.csv', frequency = True, x_max_factor = 1)
+
+make_merged_plots_std(ippath_csv, oppath, fileinfo, columns, opdir = 'histo_summary_std', filename = 'segments_s_std.csv', frequency = False, x_max_factor = 0.2)
+make_merged_plots_std(ippath_csv, oppath, fileinfo, columns, opdir = 'histo_summary_std', filename = 'segments_s_std.csv', frequency = True, x_max_factor = 0.2)
+
+
+
 
 
 
