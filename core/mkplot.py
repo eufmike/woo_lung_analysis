@@ -74,6 +74,47 @@ def make_individul_plots(ippath, oppath, fileinfo, columns, x_max_factor = 1):
             plt.close()
     return
 
+def make_individul_plots_all(ippath, oppath, fileinfo, filestat, columns, x_max_factor = 1):
+    #print("1:" + oppath)
+    # extract file list
+    labels, uniques = pd.factorize(filestat['Group'])
+    
+    for i in uniques:
+        # level: Group
+        tmp_df = filestat[filestat['Group'] == i]
+        data_merge = []
+        filenames = tmp_df['Names']
+        for key, value in columns.items():
+            # level: thickness, length
+            # get range
+            data_range = FindRange(ippath, variable = key)
+
+            plt.figure(figsize=(5, 5))
+
+            for idx, filename in enumerate(filenames):
+    
+                df_segments_s = pd.read_csv(os.path.join(ippath, filename, 'segments_s.csv'))
+                
+                # IndividualHisto(df_segments_s, column = key, bin_range = data_range, x_max_factor = x_max_factor)
+
+                binsize = 100
+                bins = np.linspace(data_range[0], data_range[1] * x_max_factor, binsize)    
+                data = df_segments_s[key]
+
+                ax = plt.subplot(len(filenames), 1, idx+1)
+                ax.hist(data, bins = bins, 
+                    weights=(np.zeros_like(data) + 1. / data.size) * 100)
+
+            ax.set_xlabel(value['x_label'])
+            ax.set_ylabel('Frequency (%)')
+                    
+            DirCheck(os.path.join(oppath, 'histo_summary'))
+            opfilename = os.path.join(oppath, 'histo_summary', 'comp_' + key + '_' + str(i) + "_" + str(i) + '.png')
+            plt.savefig(opfilename)
+            plt.close()
+    return
+
+
 def make_merged_plots(ippath, oppath, fileinfo, columns, frequency = False, x_max_factor = 1):
     # extract file list
     imglist = [x for x in os.listdir(ippath) if not x.startswith('.')]
@@ -135,3 +176,11 @@ def make_merged_plots(ippath, oppath, fileinfo, columns, frequency = False, x_ma
         plt.close()
 
     return
+
+def histo_standardize(ippath):
+    imglist = [x for x in os.listdir(ippath) if not x.startswith('.')]
+    print(imglist)
+
+    for dirname in imglist:
+        df = pd.read_csv(os.path.join(ippath, dirname, 'segments_s.csv'))
+        
